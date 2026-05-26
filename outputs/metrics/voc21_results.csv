@@ -1,0 +1,2 @@
+Model,Backbone,Upsampling,Task,Parameters (M),Model Size (MB),Pixel Accuracy (%),mIoU (%),Inference (ms/image),Training Time (s)
+fcn_resnet34_voc21,resnet34,bilinear,voc21,21.304,81.33,90.34,59.24,2.29,724.00
