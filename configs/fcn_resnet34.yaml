@@ -6,10 +6,12 @@ model:
   pretrained: true
   num_classes: 5
   head_init_seed: 42
+  upsampling: bilinear
 
 data:
   root: ./data
   year: "2012"
+  task: five_class
   train_split: train
   val_split: val
   filter_foreground: true

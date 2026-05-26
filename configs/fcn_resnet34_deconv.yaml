@@ -1,12 +1,12 @@
 experiment:
-  name: fcn_resnet18
+  name: fcn_resnet34_deconv
 
 model:
-  backbone: resnet18
+  backbone: resnet34
   pretrained: true
   num_classes: 5
   head_init_seed: 42
-  upsampling: bilinear
+  upsampling: deconv
 
 data:
   root: ./data

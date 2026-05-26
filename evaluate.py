@@ -45,6 +45,7 @@ def main() -> None:
         criterion,
         device,
         config["model"]["num_classes"],
+        dataset.class_names,
         config["data"]["ignore_index"],
     )
     result.update(
@@ -60,6 +61,8 @@ def main() -> None:
         {
             "experiment": config["experiment"]["name"],
             "backbone": config["model"]["backbone"],
+            "upsampling": config["model"].get("upsampling", "bilinear"),
+            "task": config["data"].get("task", "five_class"),
             "checkpoint": str(checkpoint_path),
             "parameters": count_trainable_parameters(model),
             "model_size_megabytes": model_size_megabytes(model),

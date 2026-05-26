@@ -16,7 +16,7 @@ from utils.visualization import plot_training_history
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Train FCN on the five-class PASCAL VOC subset.")
+    parser = argparse.ArgumentParser(description="Train FCN on a configured PASCAL VOC segmentation task.")
     parser.add_argument("--config", required=True, help="Path to a YAML experiment configuration.")
     parser.add_argument("--download", action="store_true", help="Download VOC2012 if it is not present.")
     parser.add_argument("--resume", help="Checkpoint path from which training should resume.")
@@ -89,6 +89,7 @@ def main() -> None:
             criterion,
             device,
             config["model"]["num_classes"],
+            val_dataset.class_names,
             config["data"]["ignore_index"],
         )
         current_lr = optimizer.param_groups[0]["lr"]
@@ -130,6 +131,8 @@ def main() -> None:
     summary = {
         "experiment": config["experiment"]["name"],
         "backbone": config["model"]["backbone"],
+        "upsampling": config["model"].get("upsampling", "bilinear"),
+        "task": config["data"].get("task", "five_class"),
         "device": str(device),
         "train_samples": len(train_dataset),
         "val_samples": len(val_dataset),

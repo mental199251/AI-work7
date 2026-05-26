@@ -1,8 +1,8 @@
 experiment:
-  name: fcn_resnet18
+  name: fcn_resnet50
 
 model:
-  backbone: resnet18
+  backbone: resnet50
   pretrained: true
   num_classes: 5
   head_init_seed: 42

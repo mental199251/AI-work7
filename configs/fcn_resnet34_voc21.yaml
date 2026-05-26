@@ -1,20 +1,20 @@
 experiment:
-  name: fcn_resnet18
+  name: fcn_resnet34_voc21
 
 model:
-  backbone: resnet18
+  backbone: resnet34
   pretrained: true
-  num_classes: 5
+  num_classes: 21
   head_init_seed: 42
   upsampling: bilinear
 
 data:
   root: ./data
   year: "2012"
-  task: five_class
+  task: voc21
   train_split: train
   val_split: val
-  filter_foreground: true
+  filter_foreground: false
   input_size: [320, 320]
   ignore_index: 255
   num_workers: 4

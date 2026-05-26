@@ -1,6 +1,6 @@
 # FCN on PASCAL VOC 2012: Five-Class Semantic Segmentation
 
-本项目用于完成语义分割实验：使用 FCN-8s 风格网络在 PASCAL VOC 2012 的五类子集上训练、评估并可视化结果，对比 `FCN+ResNet18` 与 `FCN+ResNet34`。
+本项目用于完成语义分割实验：使用 FCN-8s 风格网络在 PASCAL VOC 2012 的五类子集上训练、评估并可视化结果，对比 `FCN+ResNet18` 与 `FCN+ResNet34`。扩展实验支持 `ResNet50` 编码器、可学习转置卷积上采样，以及包含背景的 VOC 21 类语义分割任务。
 
 ## 实验口径
 
@@ -35,6 +35,15 @@
 ├── compare_models.py        # 对比表汇总入口
 ├── scripts/                 # 服务器运行脚本
 └── report/实验报告模板.md    # 运行后填入真实数据
+```
+
+主要扩展配置如下：
+
+```text
+configs/fcn_resnet50.yaml          # 第三编码器对比，五类 + 双线性上采样
+configs/fcn_resnet34_deconv.yaml   # 上采样对比，五类 + 转置卷积
+configs/fcn_resnet34_voc21.yaml    # 完整 VOC 任务，背景 + 20 个前景类
+scripts/run_extensions.sh          # 只训练三种新增实验的执行脚本
 ```
 
 ## 服务器环境安装
@@ -119,6 +128,8 @@ outputs/metrics/model_comparison.csv
 outputs/metrics/class_iou_comparison.csv
 ```
 
+五类可视化中灰色区域为不参与损失和指标的 VOC 非目标类别或边界区域。模型在灰色区域上的颜色预测不能直接作为五类任务的错误证据。
+
 ## 推理可视化
 
 生成三张具备目标类别覆盖性的比较图，每张图包含原图、真实标签和两个模型预测：
@@ -149,6 +160,66 @@ bash scripts/run_experiments.sh
 DEVICE=cuda:0 bash scripts/run_experiments.sh
 ```
 
+## 扩展实验
+
+扩展实验仅新增三次训练：
+
+| 实验 | 配置 | 对比目的 |
+| --- | --- | --- |
+| FCN-ResNet50-Bilinear-5Class | `configs/fcn_resnet50.yaml` | 与 ResNet18、ResNet34 对比精度、速度与大小 |
+| FCN-ResNet34-Deconv-5Class | `configs/fcn_resnet34_deconv.yaml` | 与 ResNet34 双线性上采样对比 |
+| FCN-ResNet34-Bilinear-VOC21 | `configs/fcn_resnet34_voc21.yaml` | 完成背景加 VOC 20 个前景类任务 |
+
+`VOC21` 配置输出 `21` 类；仅 VOC 标签 `255` 作为忽略区域，不再忽略其他目标类别。
+
+服务器需要保留基础实验的以下 checkpoint，以便扩展脚本复用基线进行对比：
+
+```text
+outputs/checkpoints/fcn_resnet18_best.pth
+outputs/checkpoints/fcn_resnet34_best.pth
+```
+
+拉取扩展代码后运行：
+
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt
+pytest -q
+DEVICE=cuda:0 bash scripts/run_extensions.sh
+```
+
+扩展结果输出：
+
+```text
+outputs/metrics/backbone_comparison.md
+outputs/metrics/upsampling_comparison.md
+outputs/metrics/voc21_results.md
+outputs/visualizations/backbone_comparison/
+outputs/visualizations/upsampling_comparison/
+outputs/visualizations/fcn_resnet34_voc21/
+```
+
+若基础 checkpoint 已被清除，需先重新执行基础实验脚本，再执行扩展脚本。
+
+扩展实验完成后，如需将表格与图片推回 GitHub 而不提交权重和数据集，在服务器项目目录执行：
+
+```bash
+git add -f outputs/metrics/backbone_comparison.md outputs/metrics/backbone_comparison.csv
+git add -f outputs/metrics/backbone_class_iou_comparison.csv
+git add -f outputs/metrics/upsampling_comparison.md outputs/metrics/upsampling_comparison.csv
+git add -f outputs/metrics/upsampling_class_iou_comparison.csv
+git add -f outputs/metrics/voc21_results.md outputs/metrics/voc21_results.csv
+git add -f outputs/metrics/voc21_class_iou.csv
+git add -f outputs/visualizations/fcn_resnet50_curves.png
+git add -f outputs/visualizations/fcn_resnet34_deconv_curves.png
+git add -f outputs/visualizations/fcn_resnet34_voc21_curves.png
+git add -f outputs/visualizations/backbone_comparison/*.png
+git add -f outputs/visualizations/upsampling_comparison/*.png
+git add -f outputs/visualizations/fcn_resnet34_voc21/*.png
+git commit -m "Add extension experiment results"
+git push origin main
+```
+
 ## 报告填写
 
 在服务器完成运行后，将以下真实输出填入 [实验报告模板](report/实验报告模板.md)：
@@ -158,3 +229,4 @@ DEVICE=cuda:0 bash scripts/run_experiments.sh
 - `outputs/visualizations/comparison/` 中的 2 至 3 张结果图；
 - 训练曲线与实际训练耗时；
 - 基于可视化结果和各类 IoU 的分析。
+- `outputs/metrics/backbone_comparison.md`、`upsampling_comparison.md` 与 `voc21_results.md` 中的扩展结果。

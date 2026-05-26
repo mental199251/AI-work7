@@ -5,7 +5,6 @@ from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from datasets import CLASS_NAMES
 from .metrics import SegmentationMetrics
 
 
@@ -56,10 +55,11 @@ def evaluate(
     criterion: nn.Module,
     device: torch.device,
     num_classes: int,
+    class_names: list[str],
     ignore_index: int,
 ) -> dict:
     model.eval()
-    metrics = SegmentationMetrics(num_classes, CLASS_NAMES, ignore_index)
+    metrics = SegmentationMetrics(num_classes, class_names, ignore_index)
     loss_sum = 0.0
     sample_count = 0
     start_time = time.perf_counter()

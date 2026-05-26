@@ -10,4 +10,4 @@ DEVICE="${DEVICE:-auto}"
 "${PYTHON_BIN}" evaluate.py --config configs/fcn_resnet18.yaml --device "${DEVICE}"
 "${PYTHON_BIN}" evaluate.py --config configs/fcn_resnet34.yaml --device "${DEVICE}"
 "${PYTHON_BIN}" compare_models.py
-"${PYTHON_BIN}" predict.py --compare --device "${DEVICE}"
+"${PYTHON_BIN}" predict.py --compare --output-dir outputs/visualizations/comparison --device "${DEVICE}"
