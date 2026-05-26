@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.idea/
+.vscode/
+.venv/
+venv/
+
+data/VOCdevkit/
+outputs/checkpoints/*.pth
+outputs/logs/*.csv
+outputs/metrics/*.json
+outputs/metrics/*.csv
+outputs/metrics/*.md
+outputs/visualizations/**/*.png
