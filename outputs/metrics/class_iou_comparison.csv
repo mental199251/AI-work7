@@ -1,0 +1,3 @@
+Model,background IoU (%),person IoU (%),car IoU (%),cat IoU (%),dog IoU (%)
+fcn_resnet18,92.39,73.38,73.67,66.97,61.74
+fcn_resnet34,94.00,78.52,78.94,76.35,71.42
